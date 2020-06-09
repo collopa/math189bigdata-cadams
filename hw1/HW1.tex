@@ -1,0 +1,116 @@
+\documentclass[12pt,letterpaper]{hmcpset}
+\usepackage[margin=1in]{geometry}
+\usepackage{graphicx}
+\usepackage{amsthm}
+\usepackage{enumitem}
+
+\input{macros.tex}
+
+\usepackage{fourier}
+\usepackage{physics}
+
+
+% info for header block in upper right hand corner
+\name{Colin Adams}
+\class{Math189R SU20}
+\assignment{Homework 1}
+\duedate{Monday, June 2020}
+
+\renewcommand{\labelenumi}{{(\alph{enumi})}}
+
+
+\begin{document}
+Feel free to work with other students, but make sure you write up the homework
+and code on your own (no copying homework \textit{or} code; no pair programming).
+Feel free to ask students or instructors for help debugging code or whatever else,
+though.
+The starter code for problem 2 part c and d can be found under the Resource tab on course website.\\
+
+\textit{Note:} You need to create a Github account for submission of the coding part of the homework. Please create a repository on Github to hold all your code and include your Github account username as part of the answer to problem 2.
+
+\begin{problem}[Linear Transformation]
+Let $\mathbf{y} = A\mathbf{x} + \mathbf{b}$ be a random vector.
+Show that expectation is linear:
+\[
+    \EE[\yy] = \EE[A\xx + \bb] = A\EE[\xx] + \bb.
+\]
+Also show that
+\[
+    \cov[\yy] = \cov[A\xx + \bb] = A \cov[\xx] A^\T = A\Sigmab A^\T.
+\]
+\end{problem}
+\begin{solution}
+    For the first part, we have 
+    \begin{align*}
+         \EE[\yy] = \EE[A\xx + \bb] \equiv \int (A \xx  + \bb) p(\xx) \dd{\xx} = A \int \xx \dd{\xx} + \int \bb p(\xx) \dd{\xx}.
+    \end{align*}
+    Using the definition of $\EE[\xx] \equiv \int \xx \dd{\xx}$ and since $A$ and $\bb$ are independent of $\xx$, and---lastly---because $\int p(\xx) \dd{\xx} = 1$, we have
+    \begin{align*}
+         \EE[\yy] = \EE[A\xx + \bb] = A\EE[\xx] + \bb
+    \end{align*}
+    as desired.
+
+    As for the second part, we have a similar strategy. Since the covariance is defined to be  $\cov[\xx] \equiv \EE[(\xx - \EE[\xx])(\xx - \EE[\xx])^T]$, we have
+    \begin{align*}
+         \cov[\yy] = \cov[A\xx + \bb] &\equiv  \EE[(A\xx + \bb - \EE[A\xx + \bb])(A\xx + \bb - \EE[A\xx + \bb])^T] \\
+         &= \EE[(A\xx + \bb - A\EE[\xx]  -\bb)(A\xx + \bb - A\EE[\xx]  -\bb)^T] &\qq{(result from above)} \\
+         &=\EE[(A\xx - A\EE[\xx])(A\xx  - A\EE[\xx])^T] \\
+         &= \EE[(A(\xx - \EE[\xx]))(A(\xx - \EE[\xx]))^T] \\
+         &= A\EE[(\xx - \EE[\xx]))(\xx - \EE[\xx])^T] A^T \\
+         &= A \cov[\xx] A^T &\qq{(def.\ of covariance)} \\
+         &= A \Sigmab A^T
+    \end{align*}
+    as desired.
+\end{solution}
+\newpage
+
+
+
+
+\begin{problem}[2]
+Given the dataset $\Dc = \{(x,y)\} = \{(0,1), (2,3), (3,6), (4,8)\}$
+\begin{enumerate}
+   \item Find the least squares estimate $y = \thetab^\T\xx$ by hand using
+        Cramer's Rule.
+    \item Use the normal equations to find the same solution and verify it
+        is the same as part (a).
+    \item Plot the data and the optimal linear fit you found.
+    \item Find randomly generate 100 points near the line with white Gaussian
+        noise and then compute the least squares estimate (using a computer).
+        Verify that this new line is close to the original and plot the new
+        dataset, the old line, and the new line.
+\end{enumerate}
+
+\end{problem}
+\begin{solution}
+    This seems like it's going to be a bit tedious.
+    \begin{enumerate}
+        \item We are hoping to solve for $y = m x + b$ for the least squares estimate using our data. There is a messy formula which I guess we will solve for. Notice the length of $\mathcal D = 4$. Also note the following 
+        \begin{align*}
+            \sum_i x_i = 9, \qq{} \sum_i x_i^2 = 29, \qq{} \sum_i y_i = 18, \qq{} \sum_i y_i^2 = 110,  \qq{} \sum_i x_iy_i = 56
+        \end{align*}
+        which we plug into this hideous beasts of 
+        \begin{align*}
+            m = \frac{n \sum_i x_iy_i - \qty(\sum_i x_i) \qty(\sum_i y_i) }{n \sum_i x_i^2 - \qty(\sum_i x_i)^2}
+            \qq{and}
+            b = \frac{\qty(\sum_i x_i^2)\qty(\sum_i y_i) - \qty(\sum_i x_i)\qty(\sum_i x_iy_i)}{n \sum_i x_i^2 - \qty(\sum_i x_i)^2}
+        \end{align*}
+        which we evaluate and get
+        \begin{align*}
+            m = \frac{62}{35}
+            \qq{and}
+            b = \frac{18}{35}
+        \end{align*}
+        which gives us our old friend $y = mx + b$.
+
+        \item
+
+        \item
+    \end{enumerate}
+\end{solution}
+\newpage
+
+
+
+\end{document}
+
