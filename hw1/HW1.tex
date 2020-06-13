@@ -101,11 +101,36 @@ Given the dataset $\Dc = \{(x,y)\} = \{(0,1), (2,3), (3,6), (4,8)\}$
             \qq{and}
             b = \frac{18}{35}
         \end{align*}
-        which gives us our old friend $y = mx + b$.
+        which gives us our old friend $y = mx + b$ as a fit for the data.
 
-        \item
+        \item Now, we use the normal equations to find this solution. We write 
+        \begin{align*}
+            \vb X = \mqty[1 & 0 \\ 
+                         1 & 2 \\
+                         1 & 3 \\
+                         1 & 4   
+                            ], \qq{} \vb y = \mqty[ 1\\ 3\\6\\8], \qq{and} \thetab = \mqty[b \\m].
+        \end{align*}
+        Using these allows us to evaluate the normal equations
+        \begin{align*}
+            \thetab &= (\vb X^T \vb X)^{-1}\vb X^T \vb y  = \qty( \mqty[1 & 1 & 1 & 1 \\
+ 0 & 2 & 3 & 4   
+                            ] \mqty[1 & 0 \\ 
+                         1 & 2 \\
+                         1 & 3 \\
+                         1 & 4   
+                            ] )^{-1} \mqty[1 & 1 & 1 & 1 \\
+ 0 & 2 & 3 & 4]
+                         \mqty[ 1\\ 3\\6\\8] = \frac{1}{35} \mqty[18 \\ 62 ]
+        \end{align*}
+        which is the result we expected. 
 
-        \item
+        \item[(c)\&(d)] Now we will make the plot of our optimal linear fit as well as the one with the random noise.
+        \begin{center}
+            \includegraphics[width = 3in]{data_plot.png} 
+            \includegraphics[width = 3.05in]{random_plot.png}
+        \end{center}
+        These agree quite nicely with one another.
     \end{enumerate}
 \end{solution}
 \newpage
