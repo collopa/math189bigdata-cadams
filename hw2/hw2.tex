@@ -5,13 +5,15 @@
 \usepackage{enumerate}
 \usepackage{hyperref}
 \usepackage{parskip}
+\usepackage{fourier}
 
 \input{macros.tex}
+\usepackage{physics}
 % info for header block in upper right hand corner
-\name{}
-\class{Math189R SP19}
+\name{Colin Adams} 
+\class{Math189R SU20}
 \assignment{Homework 2}
-\duedate{Monday, Feb 11, 2019}
+\duedate{June 2020}
 
 \begin{document}
 
@@ -41,7 +43,62 @@ The starter files can be found under the Resource tab on course website. The gra
 \textit{Hint:} Use the \textbf{negative} log-likelihood of logistic regression for this problem.
 \end{problem}
 \begin{solution}
-	\vfill
+	\begin{enumerate}[(a)]
+		\item Note that 
+		\begin{align*}
+			1 - \sigma(x) = \frac{e^{-x}}{1+ e^{-x}} \qq{and} \sigma'(x) = \frac{e^{-x}}{\left(1 + e^{-x}\right)^2},
+		\end{align*}
+		which makes it easy to see that
+		\begin{align*}
+			\sigma'(x) = \frac{e^{-x}}{\left(1 + e^{-x}\right)^2} = \frac{e^{-x}}{1+ e^{-x}} \frac{1}{1+ e^{-x}} = \sigma(x) (1 - \sigma(x)).
+		\end{align*}
+
+
+		\item Okay, so if we use the negative log-likelihood of the logistic regression, we have
+		\begin{align*}
+			{\rm NLL} = - \sum_i \qty[ y_i \ln \sigma(\vb w \vdot \vb x_i) + (1 - y_i) \ln(1 - \sigma(\vb w \vdot \vb x_i))]
+		\end{align*}
+		and if we take the gradient with respect to $\vb w$ is given by 
+		\begin{align*}
+			\grad_{\vb w} {\rm NLL} &= - \sum_i \grad_{\vb w} \qty[ y_i \ln \sigma(\vb w \vdot \vb x_i) + (1 - y_i) \ln(1 - \sigma(\vb w \vdot \vb x_i))] \\
+			&= -\sum_i \qty[ y_i \frac{\sigma'(\vb w \vdot \vb x_i)}{\sigma(\vb w \vdot \vb x_i)}\vb x_i 
+			-
+			(1 - y_i) \frac{\sigma'(\vb w \vdot \vb x_i)}{1 - \sigma(\vb w \vdot \vb x_i)} \vb x_i
+			] \\
+			&= -\sum_i \qty[ y_i (1 - \sigma(\vb w \vdot \vb x_i))\vb x_i 
+			-
+			(1 - y_i) \sigma(\vb w \vdot \vb x_i)\vb x_i
+			] &\qq{(result of (a))} \\
+			&= \sum_i \qty[ \sigma(\vb w \vdot \vb x_i) - y_i]\vb x_i
+		\end{align*}
+		which can be rewritten in a more compact matrix form as
+		\begin{align*}
+			\grad_{\vb w} {\rm NLL} = \vb X^T (\boldsymbol\mu - \vb y) \qq{where} \mub = \sigma(\vb X \vb w ).
+		\end{align*}
+
+		\item The Hessian $\vb H$ is the gradient of the gradient (transposed) and so 
+		\begin{align*}
+			\vb H &= \grad_{\vb w} \qty( \vb X^T (\boldsymbol\mu - \vb y) )^T \\
+			&= \grad_{\vb w} \qty( (\boldsymbol\mu  - \vb y)^T \vb X) \\
+		    &= \qty(\sum_i \grad_{\vb w}\qty[ \sigma(\vb w \vdot \vb x_i)]\vb x_i) \vb X \\
+		    &= \qty(\sum_i \sigma(\vb w \vdot \vb x_i)(1 - \sigma(\vb w \vdot \vb x_i)) \vb x_i \vb x_i^T )\vb X \\
+		    &= \qty(\sum_i \mu_i (1 - \mu_i) \vb x_i \vb x_i^T )\vb X \\
+		    &= \vb X^T \diag(\mu_i(1-\mu_i)) \vb X \\
+		    &=  \vb X^T \vb S \vb X \qq{ where } \vb S \equiv \diag(\mu_i(1-\mu_i))
+		\end{align*}
+		which is what we were hoping to get. Phew. Now we need to show that $\vb H$ is positive semidefinite, which means $\braket{ \vb v}{\vb H\vb v} \ge 0$ for any nonzero $\vb v$. A way to do this is to look at the components. So 
+		\begin{align*}
+			H_{ij} = x_i^2 x_j^2 \mu_i (1 - \mu_i) \delta_{ij} \qq{where $\delta_{ij}$ is the Kronecker delta function}
+		\end{align*}
+		and so---using the Einstein summation convention---we find $\braket{\vb v}{\vb H \vb v} $ then
+		\begin{align*}
+			\braket{ \vb v}{\vb H \vb v} &= v_i H_{ij} v_j \\
+			&= v_i ( x_j x_i \mu_i(1 - \mu_i) v_j \delta_{i j} x_i x_j) v_j \\
+			&= v_i v_j x_i^2 x_j^2 \mu_i(1 - \mu_i)  \delta_{ij} \\
+			&= v_i^2 x_i^4\mu_i(1 - \mu_i) 
+		\end{align*}
+		and since $\sum_i (v_i x_i^2)^2 \ge 0$ for all $v_i, x_i \in \mathbb R,$ we only need to really care about the $\mu_i(1 - \mu_i)$ term. Since $0<\mu_i<1$ then $\mu_i(1 - \mu_i)$ is also greater than zero. Therefore, $\braket{\vb v}{\vb H \vb v} \ge 0$ and so $\vb H$ is positive, semi-definite, i.e.\ $\vb H \succeq 0.$
+	\end{enumerate}
 \end{solution}
 \newpage
 
@@ -55,6 +112,34 @@ The starter files can be found under the Resource tab on course website. The gra
 	such that $\PP(x; \sigma^2)$ becomes a valid density.
 \end{problem}
 \begin{solution}
+	I'm just going to call $\PP$ with the easier-to-type $p$ if that's okay. Well, we need to use the fact that
+	\begin{align*}
+		\int p(x) \dd{x} = 1.
+	\end{align*}
+	In our case
+	\begin{align*}
+		p(x)= \frac{1}{Z}\exp\left(-\frac{x^2}{2\sigma^2}\right)
+	\end{align*}
+	so 
+	\begin{align*}
+		1 = \frac{1}{Z} \int_{-\infty}^\infty \exp(-\frac{x^2}{2\sigma^2}) \dd{x}.
+	\end{align*}
+	Unfortuntately, this is a hard integral to solve, so we might as well make it twice as hard. If we let 
+	\begin{align*}
+		I = \int_{-\infty}^\infty \exp(-\frac{x^2}{2\sigma^2}) \dd{x}
+	\end{align*}
+	then
+	\begin{align*}
+		I^2 &= \int_{-\infty}^\infty \exp(-\frac{x^2}{2\sigma^2}) \dd{x} \int_{-\infty}^\infty \exp(-\frac{y^2}{2\sigma^2}) \dd{y} \\
+		&= \int_{-\infty}^\infty\int_{-\infty}^\infty \exp(-\frac{x^2 + y^2}{2\sigma^2}) \dd{x} \dd{y}.
+	\end{align*}
+	We can evaluate this using polar coordinates, so 
+	\begin{align*}
+		I^2 &= \int_0^{2\pi} \int_0^\infty \exp(-r^2/2\sigma^2) r \dd{r} \dd{\theta} \\
+		&= 2\pi\sigma^2 \int_{-\infty}^0 \exp(u) \dd{u}   &\qq{(using a $u$-sub.\ with $u = -r^2/2\sigma^2$.)} \\
+		&= 2\pi\sigma^2 
+	\end{align*}
+	which implies $I = \sqrt{2\pi}\sigma = 1/Z.$ And, finally, $Z = 1/\sqrt{2\pi}\sigma.$ Special shout out to Prof.\ Saeta for showing us how to solve this like three years ago now. His unparalleled sass allowed me to remember exactly what he did to solve this.
 	\vfill
 \end{solution}
 \newpage
@@ -136,6 +221,104 @@ it doesn't, try decreasing the learning rate.
 \end{enumerate}
 \end{problem}
 \begin{solution}
+		\begin{enumerate}[(a)]
+		\item Well, if we are looking for $\vb w$ such that \[\sum_{i=1}^N \log\Nc(y_i | w_0 + \ww^\T\xx_i, \sigma^2) + \sum_{j=1}^D \log\Nc(w_j | 0, \tau^2)\] is maximized, let's plug in the normal distributions and ignore any constant terms, then we can do a little rearranging to see 
+		\begin{align*}
+			{\rm answer} &=\argmax_\ww \sum_{i=1}^N \log\Nc(y_i | w_0 + \ww^\T\xx_i, \sigma^2) + \sum_{j=1}^D \log\Nc(w_j | 0, \tau^2) \\ &= 
+			\argmax_\ww \sum_i^N \frac{-\qty(y_i - (w_0 + \ww \vdot \xx_i))^2}{2\sigma^2} - \sum_i^D - \frac{w_i^2}{2\tau^2} \\
+			&= \argmin_\ww \sum_i^N \frac{\qty(y_i - (w_0 + \ww \vdot \xx_i))^2}{2\sigma^2} + \sum_i^D \frac{w_i^2}{2\tau^2} \\
+			&= \argmin_\ww \sum_i^N \frac{\qty(y_i - (w_0 + \ww \vdot \xx_i))^2}{2\sigma^2} + \frac{1}{2\tau^2} \norm{\ww}^2.
+		\end{align*}
+		Since we can multiply the function by some constant without affecting where the maximum $\ww$ occurs, we can get
+		\begin{align*}
+			{\rm answer}= \argmin_\ww \sum_i^N \qty(y_i - (w_0 + \ww \vdot \xx_i))^2 + \frac{\sigma^2}{\tau^2} \norm{\ww}^2.
+		\end{align*}
+		We can also just scale the first term without changing where $\ww$ maximizes the function, so
+		\begin{align*}
+			{\rm answer} = \argmin_\ww \frac1N\sum_i^N \qty(y_i - (w_0 + \ww \vdot \xx_i))^2 + \frac{\sigma^2}{\tau^2} \norm{\ww}^2
+		\end{align*}
+		as desired. I'm sorry for the clunky notation.
+
+
+		\item Well, I guess we should probably rewrite $\norm{\vb A \vb x - \vb b}^2$ and $\norm{\Gamma \vb x}^2$. Since
+		\begin{align*}
+			\norm{\Gamma \vb x}^2 = \vb x^T \Gamma^T \Gamma \vb x \qq{and} \norm{\vb A \vb x - \vb b}^2 &= \qty(\vb A \vb x - \vb b)^T \qty(\vb A \vb x - \vb b) \\
+			&= \vb x^T \vb A^T \vb A \vb x - 2 \vb x^T \vb A^T \vb b + \vb b^T \vb b 
+		\end{align*}
+		then we can take the gradient with respect to $\vb x$ and get
+		\begin{align*}
+			\dv{\vb x}\qty(\norm{\vb A \vb x - \vb b}^2 + \norm{\Gamma \vb x}^2 ) &= \dv{\vb x}\qty(\vb x^T \vb A^T \vb A \vb x - 2 \vb x^T \vb A^T \vb b + \vb b^T \vb b ) + \dv{\vb x}\qty(\vb x^T \Gamma^T \Gamma \vb x )\\
+			&= 2 \qty(\vb A^T \vb A \vb x - \vb A^T \vb b + \Gamma^T \Gamma \vb x).
+		\end{align*}
+		We should probably set this to zero to find a critical point (presumably a minimum since there's no bound to how poorly you can do) and solve for $\vb x$ so
+		\begin{align*}
+		\vb A^T \vb A \vb x - \vb A^T \vb b + \Gamma^T \Gamma \vb x &= 0 \\
+		\Rightarrow 
+		\qty(\vb A^T \vb A  + \Gamma^T \Gamma )\vb x &=  \vb A^T \vb b 
+		\end{align*}
+		And thus, 
+		\begin{align*}
+			\vb x = \qty(\vb A^T \vb A  + \Gamma^T \Gamma )^{-1}\vb A^T \vb b .
+		\end{align*}
+
+		\item Coding... Here will go some plots...
+
+		\item Well, we're looking to minimize \[ 
+		||A\xx + b\1 - \yy||_2^2 + ||\Gamma\xx||_2^2 = 
+			\vb x^T \vb A^T \vb A \vb x - 2 \vb x^T \vb A^T \vb b 
+			%
+			+2 \vb b^T \vb A \vb x - 2\vb b^T \vb y
+			%
+			+ \vb b^T \vb b + \vb x^T \Gamma^T \Gamma \vb x
+		\] where $\vb b = b \vb 1$ so we should probably take a gradient
+		\begin{align*}
+		 	\dv{\vb x}\qty (||A\xx + b\1 - \yy||_2^2 + ||\Gamma\xx||_2^2) &= \dv{\vb x}\qty(\vb x^T \vb A^T \vb A \vb x - 2 \vb x^T \vb A^T \vb b 
+			%
+			+2 \vb b \vb A \vb x - 2\vb b^T \vb y
+			%
+			+ \vb b^T \vb b + \vb x^T \Gamma^T \Gamma \vb x + 2 \vb y^T \vb A \vb x + \vb y^T \vb y) \\
+			%
+			&= 2 \qty(\vb A^T \vb A \vb x - \vb A^T \vb b + \Gamma^T \Gamma \vb x + \vb A^T \vb y) 
+		 \end{align*} 
+		 which we set equal to zero and solve for $\vb x$, so 
+		 \begin{align*}
+		 	&\vb A^T(\vb b - \vb y)  = (\vb A^T \vb A + \Gamma^T \Gamma)\vb x 
+		 	&\Rightarrow \vb x = (\vb A^T \vb A + \Gamma^T \Gamma)^{-1}\vb A^T(\vb b - \vb y).
+		 \end{align*}
+		 which isn't super helpful, I suppose without $\vb b.$ Sad. I guess, doing the same thing of taking the gradient of the norm terms with respect to $\vb b$---or really $b$ where $\vb b = b \vb 1$---gives us
+		 \begin{align*}
+		 	\dv{b}\qty( \vb x^T \vb A^T \vb A \vb x - 2 \vb x^T \vb A^T \vb b 
+			%
+			+2 \vb b^T \vb A \vb x - 2\vb b^T \vb y
+			%
+			+ \vb b^T \vb b + \vb x^T \Gamma^T \Gamma \vb x ) 
+			 &= 2\qty( b \vb 1^T \vb 1 - \vb 1^T \vb y + \vb 1^T \vb A \vb x )
+		 \end{align*}
+		 which we set to zero to find 
+		 \begin{align*}
+		 	 b = \frac1n \vb 1^T(\vb y - \vb A \vb x)
+		 \end{align*}
+		 which is disappointing because I need to plug it into our $\vb x$ equation and resolve for $\vb x$. FML.  So 
+		 \begin{align*}
+		 	\vb x = (\vb A^T \vb A + \Gamma^T \Gamma)^{-1} \vb A^T \qty( \frac1n \vb 1^T(\vb y - \vb A \vb x) \vb 1 - \vb y),
+		 \end{align*}
+		 which can be rearranged to give 
+		 \begin{align*}
+		(\vb A^T \vb A + \Gamma^T \Gamma) \vb x &= \vb A^T \qty( \frac1n \vb 1^T(\vb y - \vb A \vb x) \vb 1 - \vb y) \\
+		&= \vb A^T \qty( \frac1n \vb 1 \vb 1^T \vb y - \frac1n \vb 1 \vb 1^T \vb A \vb x - \vb y ) \\
+		&= \vb A^T  \frac1n \vb 1 \vb 1^T \vb y - \vb A^T \frac1n \vb 1 \vb 1^T \vb A \vb x - \vb A^T \vb y \\
+		 \qty(\vb A^T \vb A + \Gamma^T \Gamma + \vb A^T \frac1n \vb 1 \vb 1^T \vb A ) \vb x &= \vb A^T  \frac1n \vb 1 \vb 1^T \vb y - \vb A^T \vb y \\
+		\qty(\vb A^T ( \vb I - \frac1n \vb 1 \vb 1^T \vb A) + \Gamma^T \Gamma) \vb x &= \vb A^T (\vb I - \frac1n \vb 1 \vb 1^T \vb A) \vb y  
+		 \end{align*}
+		 which tells us that
+		 \begin{align*}
+		 	\vb x = \qty[\vb A^T \qty( \vb I - \frac1n \vb 1 \vb 1^T \vb A) + \Gamma^T \Gamma]^{-1} \vb A^T \qty(\vb I - \frac1n \vb 1 \vb 1^T \vb A) \vb y  
+		 \end{align*}
+		 which is a horribly disgusting---but analytic---answer.
+
+
+		\item More coding...
+	\end{enumerate}
 	\vfill
 \end{solution}
 \newpage
