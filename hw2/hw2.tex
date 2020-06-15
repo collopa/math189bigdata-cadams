@@ -261,7 +261,13 @@ it doesn't, try decreasing the learning rate.
 			\vb x = \qty(\vb A^T \vb A  + \Gamma^T \Gamma )^{-1}\vb A^T \vb b .
 		\end{align*}
 
-		\item Coding... Here will go some plots...
+		\item We plot $\lambda$ vs.\ the root mean square error as well as $\norm{\thetab}$ below. 
+		\begin{center}
+			\includegraphics[width = 3.in]{hw2_starter_files/RMSE_vs_lambda.png}
+			\includegraphics[width = 3.in]{hw2_starter_files/norm_vs_lambda.png}
+		\end{center}
+
+		The optimal regularization value was $\lambda = 8.4493$ with a root mean square error of 0.8340 on the validation set and 0.8628 on the test set.
 
 		\item Well, we're looking to minimize \[ 
 		||A\xx + b\1 - \yy||_2^2 + ||\Gamma\xx||_2^2 = 
@@ -307,17 +313,21 @@ it doesn't, try decreasing the learning rate.
 		(\vb A^T \vb A + \Gamma^T \Gamma) \vb x &= \vb A^T \qty( \frac1n \vb 1^T(\vb y - \vb A \vb x) \vb 1 - \vb y) \\
 		&= \vb A^T \qty( \frac1n \vb 1 \vb 1^T \vb y - \frac1n \vb 1 \vb 1^T \vb A \vb x - \vb y ) \\
 		&= \vb A^T  \frac1n \vb 1 \vb 1^T \vb y - \vb A^T \frac1n \vb 1 \vb 1^T \vb A \vb x - \vb A^T \vb y \\
-		 \qty(\vb A^T \vb A + \Gamma^T \Gamma + \vb A^T \frac1n \vb 1 \vb 1^T \vb A ) \vb x &= \vb A^T  \frac1n \vb 1 \vb 1^T \vb y - \vb A^T \vb y \\
-		\qty(\vb A^T ( \vb I - \frac1n \vb 1 \vb 1^T \vb A) + \Gamma^T \Gamma) \vb x &= \vb A^T (\vb I - \frac1n \vb 1 \vb 1^T \vb A) \vb y  
+		 \qty(\vb A^T \vb A + \Gamma^T \Gamma + \vb A^T \frac1n \vb 1 \vb 1^T) \vb A  \vb x &= \vb A^T  \frac1n \vb 1 \vb 1^T \vb y - \vb A^T \vb y \\
+		\qty(\vb A^T ( \vb I - \frac1n \vb 1 \vb 1^T) \vb A + \Gamma^T \Gamma) \vb x &= \vb A^T (\vb I - \frac1n \vb 1 \vb 1^T) \vb A \vb y  
 		 \end{align*}
 		 which tells us that
 		 \begin{align*}
-		 	\vb x = \qty[\vb A^T \qty( \vb I - \frac1n \vb 1 \vb 1^T \vb A) + \Gamma^T \Gamma]^{-1} \vb A^T \qty(\vb I - \frac1n \vb 1 \vb 1^T \vb A) \vb y  
+		 	\vb x = \qty[\vb A^T \qty( \vb I - \frac1n \vb 1 \vb 1^T) \vb A + \Gamma^T \Gamma]^{-1} \vb A^T \qty(\vb I - \frac1n \vb 1 \vb 1^T) \vb A \vb y  
 		 \end{align*}
 		 which is a horribly disgusting---but analytic---answer.
 
 
-		\item More coding...
+		\item Here is our convergence plot:
+		\begin{center}
+			\includegraphics[width = 4in]{hw2_starter_files/convergence.png}
+		\end{center}
+		The difference between the norms is 080378 and the difference between the biases is 0.15388.
 	\end{enumerate}
 	\vfill
 \end{solution}
