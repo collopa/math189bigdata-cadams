@@ -1,4 +1,4 @@
-\documentclass[12pt,letterpaper,fleqn]{hmcpset}
+\documentclass[12pt,letterpaper]{hmcpset}
 \usepackage[margin=1in]{geometry}
 \usepackage{graphicx}
 \usepackage{amsmath,amssymb}
@@ -8,11 +8,16 @@
 
 \input{macros.tex}
 
+\usepackage{physics}
+\usepackage{fourier}
+\usepackage{microtype}
+
+
 % info for header block in upper right hand corner
-\name{}
-\class{Math189R SP19}
+\name{Colin Adams}
+\class{Math189R SU20}
 \assignment{Homework 3}
-\duedate{Monday, Feb 18, 2019}
+\duedate{June 2020}
 
 \begin{document}
 
@@ -32,7 +37,35 @@ though.
         Derive the mean, mode, and variance of $\theta$.
 \end{problem}
 \begin{solution}
-\vfill
+The mean is given by
+\begin{align*}
+    \mu &= \frac{\Gamma(a+b)}{\Gamma(a)\Gamma(b)}  \int_0^1 \theta \theta^{a-1}(1-\theta)^{b-1} \dd{\theta} \\ 
+    &=\frac{\Gamma(a+b)}{\Gamma(a)\Gamma(b)} \int_0^1 \theta^a (1 - \theta)^{b -1} \dd{\theta } \\
+    &= \frac{\Gamma(a+b)}{\Gamma(a)\Gamma(b)} \frac{\Gamma(a +1)\Gamma(b)} {\Gamma(a+b + 1)} \\
+    &= \frac{\Gamma(a+1)\Gamma(a+b)}{{\Gamma(a)\Gamma(a+b + 1)}} \\
+    &= \frac{a\Gamma(a) \Gamma(a+b)}{(a+b)\Gamma(a)\Gamma(a+b)} \\&= \frac{a}{a+b}.
+\end{align*}
+The variance is given by 
+\begin{align*}
+    \sigma^2 &= \frac{\Gamma(a+b)}{\Gamma(a)\Gamma(b)}  \int_0^1 \theta^2 \theta^{a-1}(1-\theta)^{b-1} \dd{\theta} \\ 
+    &= \frac{\Gamma(a+b)}{\Gamma(a)\Gamma(b)}  \int_0^1 \theta^{a+1}(1-\theta)^{b-1} \dd{\theta} \\ 
+    &= \frac{\Gamma(a+b)}{\Gamma(a)\Gamma(b)} \frac{\Gamma(a + 2)\Gamma(b)} {\Gamma(a+b + 2)} \\
+    &= \frac{\Gamma(a+b)}{\Gamma(a)} \frac{\Gamma(a + 2)} {\Gamma(a+b + 2)} \\
+    &= \frac{\Gamma(a+b)}{\Gamma(a)} \frac{(a + 1)\Gamma(a + 1)} {(a + b + 1)\Gamma(a+b + 1)} \\
+    &= \frac{a(a+1)}{(a + b + 1)(a + b)}.
+\end{align*}
+Since $\mathbb P = p$ is greater than or equal to zero, the mode is found by taking solving for $\theta$ when 
+\begin{align*}
+   0 = \dv{\theta}p(\theta; a, b)  = a \theta ^{a-2} (1-\theta )^{b-1}-\theta ^{a-2} (1-\theta )^{b-1}-b \theta ^{a-1}
+   (1-\theta )^{b-2}+\theta ^{a-1} (1-\theta )^{b-2}
+\end{align*}
+If we restrict $0 < \theta < 1$, then the mode can be solved for when   
+\begin{align*}
+     \theta ^{a-2} (1-\theta )^{b-1}+b \theta ^{a-1}
+   (1-\theta )^{b-2} &= a \theta ^{a-2} (1-\theta )^{b-1}+\theta ^{a-1} (1-\theta )^{b-2}
+\end{align*}
+And, if we divide both sides by $\theta^{a - 2}$ and $(1-\theta)^{b - 2}$ we can rearrange and solve for $\theta$, giving us
+\[ \Rightarrow \theta = \frac{a-1}{a + b - 2} = {\rm mode}. \]
 \end{solution}
 \newpage
 
@@ -46,6 +79,32 @@ corresponding to this distribution is the same as multinoulli logistic
 regression (softmax regression).
 \end{problem}
 \begin{solution}
+So the goal here is to rewrite$\text{Cat}$ in the form $p(\vb y|\etab) = b(\vb y) \exp[\etab \vdot T(\vb y) - a(\etab)]$. So let's do it. First, recall that $\sum_i x_i = 1$ and $\sum_i \mu_i = 1$ for this distribution. Since we know
+\begin{align*}
+    \text{Cat}(\xx|\mub) &= \prod_{i=1}^K \mu_i^{x_i} \\
+    &= \exp[\log(\prod_{i=1}^K \mu_i^{x_i})] \\
+    &= \exp[\sum_{i=1}^K x_i \log\mu_i] \\
+    &= \exp[\sum_{i=1}^{K-1} x_i \log\mu_i + x_k \log\mu_k] \\
+    &= \exp[\sum_{i=1}^{K-1} x_i \log\mu_i + (1 - x_1 - \ldots - x_{K-1}) \log\mu_k] \qq{(from constraint)} \\
+    &= \exp[\sum_{i=1}^{K-1} x_i \log(\frac{\mu_i}{\mu_k}) + \log\mu_k] 
+\end{align*}
+If we define $\etab = [\log(\mu_1/\mu_k), \cdots,\log(\mu_{K-1}/\mu_k)]^T $ and $\vb x = [x_1, \cdots, x_{K-1}]^T$, then we can simplify our function and write
+\begin{align*}
+    \text{Cat}(\xx|\mub) &= \exp[\etab \vdot \vb x + \log\mu_k]
+\end{align*}
+which implies that $b(\vb x) =1$ and $T(\vb x) = \vb x$. However, we need to get the $\log\mu_k$ term in terms of $\etab$ to find $a(\etab)$.
+Since we know that 
+\begin{align*}
+    \mu_k = 1 - \mu_1 - \ldots - \mu_{K-1} &= 1 - \sum_{i = 1}^{K-1} \mu_k \exp[\log(\mu_i/\mu_k)] \\
+    &= 1 - \mu_k \sum_{i = 1}^{K-1} \exp[\eta_i]
+\end{align*}
+If we solve for $\mu_k$ we have 
+\begin{align*}
+    &\mu_k = \frac{1}{1 + \sum_{i}^{K -1}\exp[\eta_i]}, 
+    &\Rightarrow
+    a(\etab) = - \log\mu_k = \log(1 + \sum_{i = 1}^{K-1} \exp[\eta_i]).
+\end{align*}
+Thus, the multinomial distribution is part of the exponential family.
 \vfill
 \end{solution}
 \newpage
