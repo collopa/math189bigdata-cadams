@@ -8,11 +8,15 @@
 
 \input{macros.tex}
 
+\usepackage{physics}
+\usepackage{fourier}
+
+
 % info for header block in upper right hand corner
-\name{}
-\class{Math189R SP19}
+\name{Colin Adams}
+\class{Math189R SU20}
 \assignment{Homework 4}
-\duedate{Monday, Feb 25, 2019}
+\duedate{June 2020}
 
 \begin{document}
 
@@ -47,7 +51,44 @@ Compute
 
 \end{problem}
 \begin{solution}
-\vfill
+\begin{enumerate}[(a)]
+    \item I'm not really sure what they want from me. We have 
+    \begin{align*}
+        p(\vb x_1) = \mathcal N (\mub_1, \Sigmab_{11}) = \mathcal N \qty( \mqty[0\\0], \mqty[6 & 8\\8&13])
+    \end{align*}
+    where $\mathcal N $ is the normal distribution. Is that what you want? (Update: glanced at the answer key. Apparently this is what you want.)
+
+    \item Similar to (a) above, we write
+    \begin{align*}
+        p(\vb x_2) = \mathcal N (\mub_2, \Sigmab_{22}) = \mathcal N (5, 14),
+    \end{align*}
+    and that's that.
+
+    \item Okay, this one is different at least, so that's exciting. Well, the answer is
+    \begin{align*}
+        p(\vb x_1 | \vb x_2) = \mathcal N(\mub_{1|2}, \Sigmab_{1|2}) \qq{where} 
+        %
+        &\mub_{1|2} = \mub_1 + \Sigmab_{12}\Sigmab_{22}^{-1}(\vb x_2 - \mub_2)  = \mqty[0\\0] + \frac{1}{14}\mqty[5\\11](\vb x_2 - 5) \\
+        %
+        &\Sigmab_{1|2} = \Sigmab_{11} - \Sigmab_{12} \Sigmab_{22}^{-1} \Sigmab_{21} = \mqty[6 & 8\\8&13] - \mqty[5\\11] \frac{1}{14} \mqty[5 & 11 ]\\ 
+        &\phantom{\Sigmab_{1|2}}=\mqty[6 & 8\\8&13]  - \frac{1}{14}\mqty[25 & 55 \\55 & 121] = \frac1{14}\mqty[ 59 & 57 \\
+ 57 & 61 ]
+    \end{align*}
+
+    \item This one is less exciting because it's the same thing as last time. So, we have
+    \begin{align*}
+        p(\vb x_2 | \vb x_1) = \mathcal N(\mub_{2|1}, \Sigmab_{2|1}) \qq{where} 
+        %
+        &\mub_{2|1} = \mub_2 + \Sigmab_{21}\Sigmab_{22}^{-1}(\vb x_1 - \mub_1) = 
+    5 + \frac{1}{14}\mqty[5&11]\qty(\vb x_1 - \mqty[0\\0])
+         \\
+         &\Sigmab_{2|1} = \Sigmab_{22} - \Sigmab_{21} \Sigmab_{11}^{-1} \Sigmab_{12} 
+         = 14\qty(1 - \frac{1}{14}\mqty[5&11]\mqty[13 & -8 \\
+ -8 & 6] \mqty[5\\11] ) \\
+ &\phantom{\Sigmab_{2|1}} = 14\qty( 1 - \frac{171}{14}) = \frac{25}{14}
+    \end{align*}
+    and we're all done here.
+\end{enumerate}
 \end{solution}
 \newpage
 
@@ -87,7 +128,25 @@ where \texttt{pix-ij} is the pixel in the \texttt{ith} row and \texttt{jth} colu
 \end{enumerate}
 \end{problem}
 \begin{solution}
-\vfill
+\begin{enumerate}[(a)]
+    \item Here is the convergence plot (seems I flipped a negative sign according to the provided plots, but it shows the same information I think):
+    \begin{center}
+        \includegraphics[width = 3.in]{hw4_starter_files/hw4pr2a_convergence.png}
+        \includegraphics[width = 3.in]{hw4_starter_files/hw4pr2a_description_old.png}
+    \end{center}
+    and if we zoom in on the three to four range for the testing descriptions, we find the optimal regularization parameter is about $\lambda = 3.44$ as shown below:
+    \begin{center}
+        \includegraphics[width = 3.5in]{hw4_starter_files/hw4pr2a_description.png}
+    \end{center}
+
+
+    \item The accuracy as function of $\lambda$ and the learning curve is plotted below. The optimal parameter was $\lambda = 0.01$ with an accuracy of 92.21\%. 
+    \begin{center}
+        \includegraphics[width = 3.in]{hw4_starter_files/hw4pr2b_lva.png}
+        \includegraphics[width = 3.in]{hw4_starter_files/hw4pr2b_convergence.png}
+    \end{center}
+
+\end{enumerate}
 \end{solution}
 \newpage
 
