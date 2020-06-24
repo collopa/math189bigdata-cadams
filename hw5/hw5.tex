@@ -8,11 +8,14 @@
 
 \input{macros.tex}
 
+\usepackage{fourier}
+\usepackage{physics}
+
 % info for header block in upper right hand corner
-\name{}
-\class{Math189R SP19}
+\name{Colin Adams}
+\class{Math189R SU20}
 \assignment{Homework 5}
-\duedate{Monday, Mar 11, 2019}
+\duedate{June 2020}
 
 \begin{document}
 
@@ -47,7 +50,49 @@ section 12.2.2 of Murphy.
 \end{enumerate}
 \end{problem}
 \begin{solution}
-\vfill
+Lots of cut and dry math coming below, so be prepared. 
+
+
+\begin{enumerate}[(a)]
+    \item We note the definition of the norm 
+    \begin{align*}
+\norm{\xx_i - \sum_{j=1}^k z_{ij}\vv_j}^2 &= \qty(\xx_i - \sum_{j=1}^k z_{ij}\vv_j)^T \qty(\xx_i - \sum_{j=1}^k z_{ij}\vv_j)
+\end{align*}
+and so, if we expand the definition we get, 
+    \begin{align*}
+    \norm{\xx_i - \sum_{j=1}^k z_{ij}\vv_j}^2 &= \qty(\xx_i - \sum_{j=1}^k z_{ij}\vv_j)^T \qty(\xx_i - \sum_{j=1}^k z_{ij}\vv_j) \\
+    &= \vb x_i^T \vb x_i - 2 \sum_{i = 1}^k z_{ij} \vb x_i^T \vb v_j + \sum_{lm}^k z_{il} z_{im} \vb v_l^T \vb v_m \\
+    &= \vb x_i^T \vb x_i - 2 \sum_{i = 1}^k z_{ij} \vb x_i^T \vb v_j + \sum_{lm}^k z_{il} z_{im} \delta_{lm} &\qq{(where $\delta_{ij}$ is Kronecker Delta)} \\
+    &= \vb x_i^T \vb x_i - 2 \sum_{i = 1}^k z_{ij} \vb x_i^T \vb v_j + \sum_{j}^k z_{ij} z_{ij} \\
+    &= \vb x_i^T \vb x_i -  \sum_{i = 1}^k \vb v_j^T \vb x_i \vb x_i^T \vb v_j &\qq{(using def.\ of $z_{ij}$)}
+    \end{align*}
+    as desired.
+    
+
+    \item We have
+    \begin{align*}
+    J_k &= \frac{1}{n}\sum_{i=1}^n \left(\xx_i^\T \xx_i - \sum_{j=1}^k\vv_j^\T \xx_i\xx_i^\T \vv_j\right) \\
+    &=  \frac{1}{n}\sum_{i=1}^n \xx_i^\T \xx_i  - \frac{1}{n}\sum_{i=1}^n  \sum_{j=1}^k\vv_j^\T \xx_i\xx_i^\T \vv_j \\
+    &=  \frac{1}{n}\sum_{i=1}^n \xx_i^\T \xx_i  -  \sum_{j=1}^k\vv_j^\T \frac{1}{n}\sum_{i=1}^n \xx_i\xx_i^\T \vv_j \\
+    &= \frac{1}{n}\sum_{i=1}^n \xx_i^\T \xx_i  -  \sum_{j=1}^k\vv_j^\T \Sigmab \vv_j &&\qq{(using def.\ of $\Sigmab$)} \\
+    &= \frac{1}{n}\sum_{i=1}^n \xx_i^\T \xx_i  -  \sum_{j=1}^k \lambda_j &&\qq{(since $\Sigmab \vb v_j = \lambda_j \vb v_j$ and $ \vb v_j^T \vb v_j = 1$)}
+    \end{align*}
+    as desired.
+
+    \item Since $J_d = 0$, from the definition of $J_k$, we see that
+    \begin{align*}
+    0 = J_d = \frac{1}{n}\sum_{i=1}^n \xx_i^\T \xx_i  -  \sum_{j=1}^d \lambda_j \qq{which imples that} \sum_{j=1}^d \lambda_j = \frac{1}{n}\sum_{i=1}^n \xx_i^\T \xx_i.
+    \end{align*}
+    Using this fact in the more general relation for $J_k$, we have
+    \begin{align*}
+    J_k &= \frac{1}{n}\sum_{i=1}^n \xx_i^\T \xx_i  -  \sum_{j=1}^k \lambda_j \\
+    &= \sum_{j=1}^d \lambda_j  -  \sum_{j=1}^k \lambda_j  &\qq{(from above)} \\
+    &= \sum_{j=1}^k \lambda_j + \sum_{j=k+1}^d \lambda_j  -  \sum_{j=1}^k \lambda_j \\
+    &= \sum_{j=k+1}^d \lambda_j  -  \sum_{j=1}^k
+    \end{align*}
+    which tells us the residual error comes from not keeping everything, which isn't super surprising but it is rather cute.
+    
+\end{enumerate}
 \end{solution}
 \newpage
 
@@ -76,7 +121,22 @@ using $\ell_1$ regularization (adding a $\lambda\|\xx\|_1$ term to the objective
 sparser solutions than using $\ell_2$ regularization for suitably large $\lambda$.
 \end{problem}
 \begin{solution}
-\vfill
+The boundary of the norm balls in two dimensions can be visualized as
+\begin{center}
+    \includegraphics[width = 2.in]{balls.png}
+\end{center}
+
+We have a function $f(\vb x)$ that is constrained to $\norm{\vb x}_p \le k$ that we are hoping to minimize. We note that the constraint tells us
+\begin{align*}
+    \norm{\vb x}_p - k \le 0\qq{} \Rightarrow \qq{} \lambda\qty(\norm{\vb x}_p - k) = 0
+\end{align*}
+for some $\lambda$.
+Our goal is to find 
+\begin{align*}
+    \argmin_{\vb x} f(\vb x) &=  \argmin_{\vb x} f(\vb x) + \lambda\qty(\norm{\vb x}_p - k) \\
+    &= \argmin_{\vb x} f(\vb x) + \lambda\norm{\vb x}_p &\text{(since $-\lambda k$ only shifts function up or down)}
+\end{align*}
+and hence minimizing $f(\vb x)$ is equivalent to minimizing $f(\vb x) + \lambda \norm{\vb x}_p$. The $L_1$ norm gives sparser solutions because there are an infinite number of solutions in which one of the parameters can be zero whereas there is exactly one in the $L_2$ case.
 \end{solution}
 \newpage
 
@@ -86,7 +146,7 @@ sparser solutions than using $\ell_2$ regularization for suitably large $\lambda
 \textbf{(Lasso)} Show that placing an equal zero-mean Laplace prior on each element of the weights $\thetab$
 of a model is equivelent to $\ell_1$ regularization in the Maximum-a-Posteriori estimate
 \begin{align*}
-    \text{maximize: } & \PP(\thetab | \Dc) = \frac{\PP(\Dc | \thetab)\PP(\thetab)}{\PP(\Dc)}.
+    \text{maximize: } & p(\thetab | \Dc) = \frac{p(\Dc | \thetab)p(\thetab)}{p(\Dc)}.
 \end{align*}
 Note the form of the Laplace distribution is
 \[
@@ -98,7 +158,31 @@ lead to sparser solutions than a Gaussian prior on each elements of the weights
 (which correspond to $\ell_2$ regularization).
 \end{problem}
 \begin{solution}
-\vfill
+If we are hoping to maximize $p(\thetab | \Dc)$ then this is the same as asking to maximize the $\log p(\thetab | \Dc) $. And so
+\begin{align*}
+     \text{maximize: }  \log p(\thetab | \Dc) &= \log \frac{p(\Dc | \thetab)p(\thetab)}{p(\Dc)}= \log p(\Dc | \thetab) + \log p(\thetab) - \log p(\Dc)
+\end{align*}
+We ignore the constant term on the right. If we assume that $p(\thetab_i) \sim \mathrm{Lap}(\thetab_i|\mu=0,b)$, then 
+\begin{align*}
+    \log p(\thetab) &\propto \log \prod_i \mathrm{Lap}(\thetab_i|\mu=0,b)= \sum_i \log \mathrm{Lap}(\thetab_i|\mu=0,b) \\
+    &=\sum_i \log\frac{1}{2b}\exp\left(-\frac{|\thetab_i|}{b}\right) \\
+    &= - \sum_i\log 2b - \sum_i \frac{\abs{\thetab_i}}{b} \\
+    &= - \sum_i\log 2b - \frac{1}{b}\norm{\thetab}_1
+\end{align*}
+This tells us that---if we ignore any constant terms---that maximizing $p(\thetab|\Dc)$ is the same as
+\begin{align*}
+    \text{maximize: }  \log p(\thetab | \Dc) &= \log p(\Dc | \thetab) - \lambda \norm{\thetab}_1 \qq{where} \lambda \equiv 1/b,
+\end{align*}
+or, equivalently,
+\begin{align*}
+    \text{minimize: }  \log p(\thetab | \Dc) &= -\log p(\Dc | \thetab) + \lambda \norm{\thetab}_1.
+\end{align*}
+
+Here is the plot comparing the Laplacian and Gaussian distributions (I'm sorry about the resolution):
+\begin{center}
+    \includegraphics[width = 3.5in]{dist.png}
+\end{center}
+This would lead to sparser solutions presumably because more of the distribution is centered around zero than the Gaussian.
 \end{solution}
 
 \end{document}
