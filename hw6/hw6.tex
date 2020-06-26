@@ -8,11 +8,13 @@
 
 \input{macros.tex}
 
+\usepackage{fourier,physics,microtype}
+
 % info for header block in upper right hand corner
-\name{}
-\class{Math189R SP19}
+\name{Colin Adams}
+\class{Math189R SU20}
 \assignment{Homework 6}
-\duedate{Monday, Apr 1, 2019}
+\duedate{June 2020}
 
 \begin{document}
 
@@ -33,7 +35,62 @@ estimation of a mixture of Gaussians is given by
 \end{align*}
 \end{problem}
 \begin{solution}
-\vfill
+From Murphy, the part of $Q$ that is dependent on $\mub_k$ and $\Sigmab_k$ is contained in 
+\begin{align*}
+l(\mub_k, \Sigmab_k) = \sum_{k,i} r_{ik} \log p(\vb x_i | \thetab_k) = -\frac12 \sum_i r_{ik}\qty[\log(\det (\Sigmab_k) )+ (\vb x_i - \mub_k)^T \Sigmab^{-1}_k (\vb x_i - \mub_k)]
+\end{align*}
+where we ignore any constants not related $\mub_k$ and $\Sigmab_k$. To solve for $\mub_k$ and $\Sigmab_k$ we will need to take a gradient of $l$. Let's start with $\mub_k$:
+\begin{align*}
+\dv{l}{\mub_k} = -\frac12 \sum_i r_{ik} \dv{\mub_k}\qty((\vb x_i - \mub_k)^T \Sigmab^{-1}_k (\vb x_i - \mub_k)).
+\end{align*}
+Note that 
+\begin{align*}
+(\vb x_i - \mub_k)^T \Sigmab^{-1}_k (\vb x_i - \mub_k) =  \vb x_i^T \Sigmab^{-1}_k \vb x_i - \vb x_i^T \Sigmab^{-1}_k \mub_k - \mub_k^T \Sigmab^{-1}_k \vb x_i + \mub_k^T \Sigmab^{-1}_k \mub_k
+\end{align*}
+so
+\begin{align*}
+\dv{\mub_k}\qty((\vb x_i - \mub_k)^T \Sigmab^{-1}_k (\vb x_i - \mub_k)) =  2 \qty(\Sigmab_k^{-1}(\vb x_i - \mub_k))
+\end{align*}
+which implies
+\begin{align*}
+\dv{l}{\mub_k} = - \sum_i r_{ik} \Sigmab_k^{-1}(\vb x_i - \mub_k) = - \Sigmab_k^{-1} \sum_i r_{ik} (\vb x_i - \mub_k).
+\end{align*}
+To find the optimal solution, we need to set this equal to zero, and solve for $\mub_k$ which gives us
+\begin{align*}
+0 = \sum_i r_{ik} (\vb x_i - \mub_k) \qq{} \Rightarrow \mub_k = \frac{\sum_i r_{ik} \vb x_i}{r_k} \qq{where} r_k \equiv \sum_i r_{ik}.
+\end{align*}
+
+
+Now for the gradient with respect to $\Sigmab_k$, we have
+\begin{align*}
+\dv{l}{\Sigmab_k} &= -\frac12 \sum_i r_{ik} \dv{\Sigmab_k}\qty(\log(\det (\Sigmab_k) )+  (\vb x_i - \mub_k)^T \Sigmab^{-1}_k (\vb x_i - \mub_k)) \\
+ &= -\frac12 \sum_i r_{ik} \qty(\Sigmab^{-T}_k + \dv{\Sigmab_k} (\vb x_i - \mub_k)^T \Sigmab^{-1}_k (\vb x_i - \mub_k)) \\
+ &= -\frac12 \sum_i r_{ik} \qty(\Sigmab^{-1}_k -  \Sigmab^{-T}_k (\vb x_i - \mub_k) (\vb x_i - \mub_k)^T \Sigmab^{-T}_k ) \\
+ &= -\frac12 \sum_i r_{ik} \qty(\Sigmab^{-1}_k -  \Sigmab^{-1}_k (\vb x_i - \mub_k) (\vb x_i - \mub_k)^T \Sigmab^{-1}_k )
+\end{align*}
+which we set to zero and solve for $\Sigmab_k$. Doing so, we get
+\begin{align*}
+0 = \sum_i r_{ik} \qty(\Sigmab^{-1}_k -  \Sigmab^{-1}_k (\vb x_i - \mub_k) (\vb x_i - \mub_k)^T \Sigmab^{-1}_k ) 
+\end{align*}
+implying the next few steps of algebra:
+\begin{align*}
+\sum_i r_{ik} \Sigmab^{-1}_k &= \sum_i  \qty(r_{ik} \Sigmab^{-1}_k (\vb x_i - \mub_k) (\vb x_i - \mub_k)^T \Sigmab^{-1}_k ) \\
+\Sigmab_k \Sigmab^{-1}_k \sum_i r_{ik}  &= \Sigmab_k\sum_i  \qty(r_{ik} \Sigmab^{-1}_k (\vb x_i - \mub_k) (\vb x_i - \mub_k)^T \Sigmab^{-1}_k ) \\
+r_k \vb I   &= \sum_i  \qty(r_{ik} (\vb x_i - \mub_k) (\vb x_i - \mub_k)^T \Sigmab^{-1}_k )\\
+r_k \Sigmab_k   &= \sum_i  \qty(r_{ik} (\vb x_i - \mub_k) (\vb x_i - \mub_k)^T \Sigmab^{-1}_k \Sigmab_k)
+\end{align*}
+and thus, gives us our final answer
+\begin{align*}
+\Sigmab_k = \frac{1}{r_{k}} \sum_i r_{ik}(\vb x_i - \mub_k) (\vb x_i - \mub_k)^T 
+\end{align*}
+as desired.
+
+
+
+
+
+
+
 \end{solution}
 \newpage
 
@@ -51,8 +108,13 @@ image for $k\in\{2,10,20\}$.
 
 \end{problem}
 \begin{solution}
-\vfill
+Dropoff and reconstruction plots are below.
+\begin{center}
+    \includegraphics[width = 4in]{hw6_starter_file/dropoff.png}
+    \includegraphics[width = 4in]{hw6_starter_file/reconstruction.png}
+\end{center}
+Pretty neat to be honest. It's encouraging that the eigenvalues of the dropoff drops off so much for the shuffled data. Makes sense logically but still neat. 
 \end{solution}
-\newpage
+
 
 \end{document}
