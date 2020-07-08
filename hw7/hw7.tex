@@ -8,11 +8,14 @@
 
 \input{macros.tex}
 
+\usepackage{physics}
+\usepackage{fourier}
+
 % info for header block in upper right hand corner
-\name{}
-\class{Math189R SP19}
+\name{Colin Adams}
+\class{Math189R SU20}
 \assignment{Homework 7}
-\duedate{Wednesday, Apr 8, 2019}
+\duedate{July 2020}
 
 \begin{document}
 
@@ -37,6 +40,40 @@ is given by
 \]
 \end{problem}
 \begin{solution}
+Okay, so we are maximizing a weighted sum of $ p(\vb x_i | \thetab_k)$ which is the same thing as maximizing its logarithm. To do that, we take the logarithm of it
+\begin{align*}
+\sum_{ij} r_{ij} \log p(\vb x_i | \thetab_j) = \sum_{ij} r_{ij} \sum_k \vb x_{ij} \log  \mub_{jk} + (1 - \vb x_{ij})\log(1 - \mub_{jk})
+\end{align*}
+which we take the gradient of with respect to $\mub_{jk}$ which gives us
+\begin{align*}
+\grad_{\mub_{jk}} \sum_{ij} r_{ij} \log p(\vb x_i | \thetab_j) = \sum_i r_{ij} \qty(\frac{\vb x_{ij} - \mub_{jk}}{\mub_{jk}(1 - \mub_{jk})}).
+\end{align*}
+Setting this to zero, we find that
+\begin{align*}
+\sum_i r_{ij} \vb x_{ij} = \sum_i r_{ij} \mub_{jk} \qquad \Rightarrow \mub_{jk} = \frac{1}{\sum_i r_{ij}}\sum_i r_{ij} \vb x_{ij}
+\end{align*}
+which we wished to show. 
+
+Now if we do a similar thing, except we have a prior belief (i.e.\ the MAP maximization), we hope to maximize a mixture of $p(\vb x_i | \mub_k) p(\mub_k)$ where $p(\mub_k) \sim \beta(a,b)$. Again, this is the same thing as maximizing the log of that, so writing that out we have
+\begin{align*}
+\sum_{ij} r_{ij} \log p(\vb x_i | \mub_k) p(\mub_k) = \sum_{ij} r_{ij} \log p(\vb x_i | \mub_k)  + \log p(\mub_k).
+\end{align*}
+The first term is the same as above and the second term is very similar, so we have
+\begin{align*}
+\sum_{ij} r_{ij} \log p(\vb x_i | \mub_k)  + \log p(\mub_k) = \sum_{ij} r_{ij} \sum_k & \vb x_{ij} \log  \mub_{jk} + (1 - \vb x_{ij})\log(1 - \mub_{jk}) \\ &+ (a-1) \log  \mub_{jk} + (b - 1) \log (1 - \log \mub_{jk}). 
+\end{align*}
+Taking the derivative of this monstrosity with respect to $\mub$ gives us, after a few pages of algebra and some help from Mathematica, 
+\begin{align*}
+\grad_{\mub} ({\rm above}) = \frac{1}{\mub_{jk}(1 - \mub{jk})} \qty[\sum_i r_{ij} \vb x_{ij}  + (a - 1) - \mub_{jk}\qty((a -1) + (b -1) + \sum_i r_{ij})].
+\end{align*}
+Set [$\cdot$]'s to zero, and we can solve for $\mub_{jk}$ which gives us 
+\begin{align*}
+\mub_{jk} = \frac{\sum_i r_{ij} \vb x_{ij} + (a - 1)}{(a -1) + (b -1) + \sum_i r_{ij}}
+\end{align*}
+which is what we wished to show.
+
+
+
 \vfill
 \end{solution}
 \newpage
@@ -64,7 +101,23 @@ plot, provide an ordered list of the top five features in predicting the log-sha
 article from this dataset (with justification).
 \end{problem}
 \begin{solution}
-\vfill
+Doing the math bit, we have a given data vector $\vb x$, so 
+\begin{align*}
+\grad \norm{\vb x}_1 = \grad \sum_i \abs{x_i} = \sum_i \sign( x_i) \vu e = \sign(\vb x).
+\end{align*}
+Okay, if we hope to minimize $\norm{\vb A \vb x - \vb b}^2_2 + \lambda \norm{\vb x}_1$ then we just take the gradient and set to zero and all that so, using our matrix calculus rules we get
+\begin{align*}
+ 0 = \grad(\norm{\vb A \vb x - \vb b}^2_2 + \lambda \norm{\vb x}_1) = \lambda \sign(\vb x) + 2(\vb A^T \vb A \vb x - \vb b^T \vb A) \qquad \Rightarrow \frac{\lambda}{2}\sign(\vb x) = \vb A^T \vb A \vb x - \vb b^T \vb A.
+\end{align*}
+
+ \begin{center}
+     \includegraphics[width = 4.in]{hw7_starter_files/hw7pr2_lasso.png}
+ \end{center}
+Apparently the most important features are \texttt{[`timedelta', `weekday\_is\_wednesday', `weekday\_is\_thursday',
+ `weekday\_is\_friday', `weekday\_is\_saturday']} and our plot is given above.
+
+
+
 \end{solution}
 \newpage
 
