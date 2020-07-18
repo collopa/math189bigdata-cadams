@@ -1,0 +1,28 @@
+Goal: predict activity someone is doing (regardless of user)
+
+compare naive to correctly mapped approach
+
+To Do List:
+
+
+parse mobi-act dataset
+
+run one fold user cross val on the processed mobi act dataset
+
+
+figure out how to map to tangent plane correctly
+- option 1: mapping the data to the plane, testing with our classifiers in the plane, get results 
+- option 2: mapping the data to the plane, train in the plane
+-- map the model back to the manifold, so that way all future data doesn't need to be mapped
+--- don't know if this is possible...
+
+
+stretch goals:
+re-wire the DNN jupyter notebook for our the motion sense dataset
+fundamental limit of deep learning:
+- number of data points needed vs performance
+
+
+writing:
+- how datasets were combined
+- background on datasets 
