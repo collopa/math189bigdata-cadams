@@ -19,7 +19,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
 
-# Colin_Eli_Kai_Math_178_Final
+# Colin_Eli_Kai_Math_178_189R_Final
 
 Repository with code for the Math 178 and 189R final projects, Summer 2020.
 
